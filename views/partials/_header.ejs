@@ -3,9 +3,12 @@
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <title>TinyApp</title>
+  <title>TinyApp Example</title>
 
-  <a href="/urls"><h1>TinyApp</h1></a>
+  <h1>TinyApp</h1>
+  <% if (username) { %>
+  <h2>Logged in As: <%= username %></h2>
+  <% } %>
 
   <% if (!username) { %>
     <form action="/login" method="POST">

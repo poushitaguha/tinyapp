@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <% include ./partials/_header %>
+<%- include('./partials/_header', { username: username }) %>
 </head>
 <body style="font-size:20px; padding:50px;">
 
    <!-- Add EJS code here -->
-   <h1>TinyApp</h1>
    <a href="/urls/new">Create new TinyURL</a>
    <p>ShortURL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
 

@@ -46,6 +46,14 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// Add a POST route that updates a URL resource; POST /urls/:id
+app.post("/urls/:shortURL", (req, res) => {
+// Assigning new longURL to database
+  urlDatabase[req.params.shortURL] = req.body.longURL;
+  console.log(req.body);  // Log the POST request body to the console
+  res.redirect("/urls");
+});
+
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[shortURL];
   res.redirect(longURL);

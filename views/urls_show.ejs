@@ -8,9 +8,9 @@
    <!-- Add EJS code here -->
    <h1>TinyApp</h1>
    <a href="#">Create new TinyURL</a>
-   <p>ShortURL: <%= shortURL %></p>
+   <p>ShortURL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
 
-    <form class="form-inline" action="/urls" method="POST">
+    <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
       <div class="form-group mb-2">
         <label for="longURL">Enter a URL:</label>
         <input value="<%= longURL %>" class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">

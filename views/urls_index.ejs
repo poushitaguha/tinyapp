@@ -6,7 +6,7 @@
 <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
     <a href="/urls/new">Create new TinyURL</a>
-    <h3>My URLs</h3>
+    <h4>My URLs</h4>
     <ul>
     <% for (key in urls) { %>
     <li><%= key %>: <a href="<%= urls[key] %>"><%= urls[key] %></a> &nbsp;&nbsp;

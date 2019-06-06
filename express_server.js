@@ -41,13 +41,14 @@ function generateRandomUserId() {
 function lookupEmail (email) {
   for (let key in users) {
     if (email === users[key].email){
-      return true;
+      return users[key];
     }
   }
+  return false;
 }
 
 app.get("/register", (req, res) => {
-  let templateVars = { email: req.body.email, password: req.body.password };
+  let templateVars = {};
   res.render("urls_register", templateVars);  
 });
  
@@ -71,6 +72,7 @@ app.post("/register", (req, res) => {
   console.log(users);     // Log the object to the console
   res.redirect("/urls");
   }
+
 });
 
 app.post("/login", (req, res) => {
@@ -86,7 +88,12 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+
+  // let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  let templateVars = { urls: urlDatabase, user: user };
   res.render("urls_index", templateVars);
 });
 

@@ -9,19 +9,68 @@ app.use(cookies());
 
 app.set("view engine", "ejs");
 
-// Function to generate random string - a shortURL from longURL
-function generateRandomString() {
-   return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0,5);
-}
-
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
+// Function to generate random string - a shortURL from longURL
+function generateRandomString() {
+  return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0,5);
+}
+
+// Function to generate random string - a shortURL from longURL
+function generateRandomUserId() {
+  return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(2, 10);
+}
+
+// Function to lookup for existing email
+function lookupEmail (email) {
+  for (let key in users) {
+    if (email === users[key].email){
+      return true;
+    }
+  }
+}
+
 app.get("/register", (req, res) => {
   let templateVars = { email: req.body.email, password: req.body.password };
   res.render("urls_register", templateVars);  
+});
+ 
+app.post("/register", (req, res) => {
+  if (req.body.email === "" || req.body.passsword === "") {
+    res.status(400).send("Email or password is empty.");
+  }
+  else if (lookupEmail(req.body.email)){
+    res.status(400).send("Email is already registered. Try another.");
+  }
+  else {
+    let id = generateRandomUserId();
+    let email = req.body.email;
+    let password = req.body.password;
+      users[id] = { 
+          id: id, 
+          email: email, 
+          password: password
+        }
+  res.cookie("user_id", id);
+  console.log(users);     // Log the object to the console
+  res.redirect("/urls");
+  }
 });
 
 app.post("/login", (req, res) => {

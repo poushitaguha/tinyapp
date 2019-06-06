@@ -19,6 +19,11 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+app.get("/register", (req, res) => {
+  let templateVars = { email: req.body.email, password: req.body.password };
+  res.render("urls_register", templateVars);  
+});
+
 app.post("/login", (req, res) => {
   res.cookie("username", req.body.username);
   res.redirect("/urls");

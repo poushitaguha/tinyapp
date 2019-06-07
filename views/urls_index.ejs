@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <%- include('./partials/_header', { user: user }) %>
+<%- include('./partials/_header', { user: user }) %>
 </head>
 <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
@@ -9,10 +9,10 @@
     <h4>My URLs</h4>
     <ul>
     <% for (let key in filteredUrls) { %>
-    <li><%= key %>: <a href="<%= filteredUrls[key].longURL %>"><%= filteredUrls[key].longURL %></a> &nbsp;&nbsp;
+    <li><a href="/u/<%= key %>"> <%= key %></a> : <%= filteredUrls[key].longURL %> &nbsp;&nbsp;      
       <span class="btn-group" role="group" aria-label="Modify link">
         <form method="GET" action="/urls/<%= key %>"><button type="submit" class="btn btn-primary">Edit</button></form>&nbsp;
-        <form method="POST" action="/urls/<%= key %>/delete"><button type="submit" class="btn btn-primary">Delete</button></form>
+        <form method="POST" action="/urls/<%= key %>/delete"><button type="submit" class="btn btn-danger">Delete</button></form>
       </span>
     </li>
     <% }; %>

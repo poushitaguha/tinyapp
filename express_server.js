@@ -3,6 +3,7 @@ var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 
+const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookies());
@@ -71,21 +72,24 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
 
+  // bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword); // returns true
+  // bcrypt.compareSync("pink-donkey-minotaur", hashedPassword); // returns false
+
   const enteredEmail = req.body.login
   const enteredPswd =  req.body.password
   let loggedUser;
   for (let userId in users) {
     let user = users[userId]
-    // console.log("Entered user data", user.email)
       if (user.email === enteredEmail) {
         loggedUser = user;
       }
   }
 
-
   if (loggedUser === undefined) {
     res.status(400).send('User doesnt exist in database, Register!');
-  } else if (loggedUser.password !== enteredPswd) {
+  // } else if (loggedUser.password !== enteredPswd) {
+  } else if (!bcrypt.compareSync(enteredPswd, loggedUser.password)) { 
+    console.log(loggedUser); 
     res.status(400).send('Incorrect Password! Please try again!');          
   }
   else {
@@ -111,7 +115,8 @@ app.post("/register", (req, res) => {
   else {
     let id = generateRandomUserId();
     let email = req.body.email;
-    let password = req.body.password;
+    // let password = req.body.password;
+    let password = bcrypt.hashSync(req.body.password, 10);  
       users[id] = { 
           id: id, 
           email: email, 
@@ -142,8 +147,8 @@ app.get("/urls", (req, res) => {
   } else {
   // let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   let templateVars = { urls: urlDatabase, user: user, filteredUrls: urlsForUser(userId) };
-  console.log(urlDatabase);
-  console.log(urlsForUser(userId));
+  // console.log(urlDatabase);
+  // console.log(urlsForUser(userId));
   res.render("urls_index", templateVars);
   }
 });
@@ -165,7 +170,7 @@ app.post("/urls", (req, res) => {
   urlDatabase[shortURL] = {};
   urlDatabase[shortURL].longURL = req.body.newLongURL;
   urlDatabase[shortURL].userID = userId;  
-  
+
   console.log(req.body);  // Log the POST request body to the console
   res.redirect(`/urls/${shortURL}`);
 });

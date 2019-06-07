@@ -52,6 +52,7 @@ function lookupEmail (email) {
   return false;
 }
 
+// Function to filter URLS as per
 function urlsForUser(id) {
     let filteredUrls = {};
     for (let url in urlDatabase) {
@@ -59,6 +60,7 @@ function urlsForUser(id) {
         filteredUrls[url] = urlDatabase[url]
       }
     }
+    // console.log(filteredUrls);
     return filteredUrls;
 }
 
@@ -75,15 +77,18 @@ app.post("/login", (req, res) => {
   for (let userId in users) {
     let user = users[userId]
     // console.log("Entered user data", user.email)
-      if (user.email === enteredEmail && user.password === enteredPswd) {
-      loggedUser = user;
-      // console.log("Logged user id", loggedUser)
+      if (user.email === enteredEmail) {
+        loggedUser = user;
       }
   }
 
+
   if (loggedUser === undefined) {
     res.status(400).send('User doesnt exist in database, Register!');
-  } else {
+  } else if (loggedUser.password !== enteredPswd) {
+    res.status(400).send('Incorrect Password! Please try again!');          
+  }
+  else {
     res.cookie('user_id', loggedUser.id);
     res.redirect('/urls');
   }
@@ -137,6 +142,8 @@ app.get("/urls", (req, res) => {
   } else {
   // let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   let templateVars = { urls: urlDatabase, user: user, filteredUrls: urlsForUser(userId) };
+  console.log(urlDatabase);
+  console.log(urlsForUser(userId));
   res.render("urls_index", templateVars);
   }
 });
@@ -150,9 +157,15 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = {};
   urlDatabase[shortURL].longURL = req.body.newLongURL;
+  urlDatabase[shortURL].userID = userId;  
+  
   console.log(req.body);  // Log the POST request body to the console
   res.redirect(`/urls/${shortURL}`);
 });

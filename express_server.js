@@ -6,14 +6,17 @@ var PORT = 8080; // default port 8080
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookies());
-
 app.set("view engine", "ejs");
 
-// var urlDatabase = {
-//   "b2xVn2": "http://www.lighthouselabs.ca",
-//   "9sm5xK": "http://www.google.com"
-// };
+var cookieSession = require('cookie-session')
+app.use(cookieSession({
+  name: 'session',
+  keys: ["key1", "key2"],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
+
 
 const urlDatabase = {
   "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "userRandomID" },
@@ -53,7 +56,7 @@ function lookupEmail (email) {
   return false;
 }
 
-// Function to filter URLS as per
+// Function to filter URLS as per logged in user
 function urlsForUser(id) {
     let filteredUrls = {};
     for (let url in urlDatabase) {
@@ -61,7 +64,6 @@ function urlsForUser(id) {
         filteredUrls[url] = urlDatabase[url]
       }
     }
-    // console.log(filteredUrls);
     return filteredUrls;
 }
 
@@ -71,9 +73,6 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-
-  // bcrypt.compareSync("purple-monkey-dinosaur", hashedPassword); // returns true
-  // bcrypt.compareSync("pink-donkey-minotaur", hashedPassword); // returns false
 
   const enteredEmail = req.body.login
   const enteredPswd =  req.body.password
@@ -88,14 +87,14 @@ app.post("/login", (req, res) => {
   if (loggedUser === undefined) {
     res.status(400).send('User doesnt exist in database, Register!');
   // } else if (loggedUser.password !== enteredPswd) {
-  } else if (!bcrypt.compareSync(enteredPswd, loggedUser.password)) { 
-    console.log(loggedUser); 
+  } else if (!bcrypt.compareSync(enteredPswd, loggedUser.password)) {
     res.status(400).send('Incorrect Password! Please try again!');          
   }
-  else {
-    res.cookie('user_id', loggedUser.id);
-    res.redirect('/urls');
-  }
+    else {
+      // res.cookie('user_id', loggedUser.id);
+      req.session.user_id = loggedUser.id;  
+      res.redirect('/urls');
+    }
 
 });
 
@@ -122,7 +121,8 @@ app.post("/register", (req, res) => {
           email: email, 
           password: password
         }
-  res.cookie("user_id", id);
+  // res.cookie("user_id", id);
+  req.session.user_id = id;
   console.log(users);     // Log the object to the console
   res.redirect("/urls");
   }
@@ -132,22 +132,21 @@ app.post("/register", (req, res) => {
 // Implement the /logout endpoint so that it clears the username cookie and
 // redirects the user back to the /urls page.
 app.post("/logout", (req, res) => {
-  // res.clearCookie("username");
-  res.clearCookie("user_id");  
+  // res.clearCookie("user_id"); 
+  req.session = null; 
   res.redirect("/urls");
 });
 
 app.get("/urls", (req, res) => {
 
-  const userId = req.cookies["user_id"];
+  // const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;   
   const user = users[userId];
 
   if (!user) {
     res.redirect("/login");
   } else {
-  // let templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   let templateVars = { urls: urlDatabase, user: user, filteredUrls: urlsForUser(userId) };
-  // console.log(urlDatabase);
   // console.log(urlsForUser(userId));
   res.render("urls_index", templateVars);
   }
@@ -163,7 +162,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.post("/urls", (req, res) => {
 
-  const userId = req.cookies["user_id"];
+  // const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;  
   const user = users[userId];
 
   let shortURL = generateRandomString();
@@ -177,10 +177,10 @@ app.post("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
 
-  const userId = req.cookies["user_id"];
+  // const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;    
   const user = users[userId];
 
-  // let templateVars = { username: req.cookies["username"] };
   let templateVars = { user: user };
 
   // Only registered and logged in users can create new tiny URLs 
@@ -193,13 +193,13 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
 
-  const userId = req.cookies["user_id"];
+  // const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;    
   const user = users[userId];
 
   if (!user) {
     res.redirect("/login");
   } else {
-  // let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
   let templateVars = { shortURL: req.params.shortURL,
                        longURL: urlDatabase[req.params.shortURL].longURL, 
                        user: user, filteredUrls: urlsForUser(userId) };

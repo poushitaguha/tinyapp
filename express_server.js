@@ -78,7 +78,7 @@ app.post("/login", (req, res) => {
   const enteredPswd =  req.body.password
   let loggedUser;
   for (let userId in users) {
-    let user = users[userId]
+    let user = users[userId];
       if (user.email === enteredEmail) {
         loggedUser = user;
       }

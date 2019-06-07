@@ -8,8 +8,8 @@
     <a href="/urls/new">Create new TinyURL</a>
     <h4>My URLs</h4>
     <ul>
-    <% for (key in urls) { %>
-    <li><%= key %>: <a href="<%= urls[key] %>"><%= urls[key] %></a> &nbsp;&nbsp;
+    <% for (key in filteredUrls) { %>
+    <li><%= key %>: <a href="<%= filteredUrls[key]["longURL"] %>"><%= filteredUrls[key]["longURL"] %></a> &nbsp;&nbsp;
       <span class="btn-group" role="group" aria-label="Modify link">
         <form method="GET" action="/urls/<%= key %>"><button type="submit" class="btn btn-primary">Edit</button></form>&nbsp;
         <form method="POST" action="/urls/<%= key %>/delete"><button type="submit" class="btn btn-primary">Delete</button></form>

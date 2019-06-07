@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body style="font-size:20px; padding:50px;">
-<h1>TinyApp</h1>
+<%- include('./partials/_header') %>
+    
 <form method="POST" action="/login">
    <p>Login Page: </p>
    <input class="form-control" type="text" name="login" placeholder="email" style="width: 300px; margin: 1em">

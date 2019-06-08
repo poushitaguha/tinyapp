@@ -89,7 +89,7 @@ app.post("/login", (req, res) => {
   // } else if (loggedUser.password !== enteredPswd) {
   } else if (!bcrypt.compareSync(enteredPswd, loggedUser.password)) {
     res.status(400).send('Incorrect Password! Please try again!');          
-  }
+    }
     else {
       // res.cookie('user_id', loggedUser.id);
       req.session.user_id = loggedUser.id;  

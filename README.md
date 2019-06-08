@@ -14,7 +14,11 @@ TinyApp Login Page
 
 ![TinyApp Login Page](https://github.com/poushitaguha/tinyapp/blob/master/docs/TinyApp%20Login%20Page.png "TinyApp Login Page")
 
-TinyApp URL display page
+TinyApp Create URL Page
+
+![TinyApp Create URL Page](https://github.com/poushitaguha/tinyapp/blob/master/docs/TinyApp%20create%20new%20URL%20page.png "TinyApp Create URL Page")
+
+TinyApp URL Display Page
 
 ![TinyApp URL display page](https://github.com/poushitaguha/tinyapp/blob/master/docs/TinyApp%20URL%20display%20page.png "TinyApp URL display page")
 

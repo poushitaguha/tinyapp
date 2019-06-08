@@ -4,17 +4,7 @@ TinyApp is a full stack web application built with Node and Express  that allows
 
 ## Final Product
 
-TinyApp Login Page
-
-/Users/srimantabagchi/Desktop/TinyApp Login Page.png
-
-TinyApp Registration Page
-
-/Users/srimantabagchi/Desktop/TinyApp Registration Page.png
-
-TinyApp URL display page
-
-/Users/srimantabagchi/Desktop/TinyApp URL display page.png
+When users register/login in TinyApp home page, they are able to create shortened URLs for long URLS. The shortened URLs and their corresponding long URLS are displayed as a list. The users can then update or delete those URLS because edit/delete buttons are provided in the website. 
 
 ## Dependencies
 

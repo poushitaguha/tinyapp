@@ -32,7 +32,7 @@ const users = {
     id: "user2RandomID", 
     // email: "user2@example.com",
     email: "posh@xyz.com", 
-    // password: "dishwasher-funk"
+    // password: "123"
     password: "$2b$10$aWEVAbbBMakMGMsn1xwq6eL6MF41Cuf/eHwV3a2Mp/N62whYHDkLC"
   }
 }

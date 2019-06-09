@@ -1,18 +1,16 @@
-var cookies = require("cookie-parser");
-var express = require("express");
-var app = express();
-var PORT = 8080; // default port 8080
-
+const cookies = require("cookie-parser");
+const express = require("express");
+const app = express();
+const PORT = 8080; // default port 8080
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
-app.set("view engine", "ejs");
+const cookieSession = require('cookie-session')
 
-var cookieSession = require('cookie-session')
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
   keys: ["key1", "key2"],
-
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
@@ -27,12 +25,15 @@ const users = {
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    // password: "purple-monkey-dinosaur"
+    password: "$2b$10$UaeB4I1Bhx/SmerQvwmDUuP5H7oZTEUXG7lWwpF3TMQmSPEDugzme"
   },
  "user2RandomID": {
     id: "user2RandomID", 
-    email: "user2@example.com", 
-    password: "dishwasher-funk"
+    // email: "user2@example.com",
+    email: "posh@xyz.com", 
+    // password: "dishwasher-funk"
+    password: "$2b$10$aWEVAbbBMakMGMsn1xwq6eL6MF41Cuf/eHwV3a2Mp/N62whYHDkLC"
   }
 }
 
@@ -123,7 +124,7 @@ app.post("/register", (req, res) => {
         }
   // res.cookie("user_id", id);
   req.session.user_id = id;
-  console.log(users);     // Log the object to the console
+  // console.log(users);     // Log the object to the console
   res.redirect("/urls");
   }
 
@@ -148,16 +149,22 @@ app.get("/urls", (req, res) => {
   } else {
   let templateVars = { urls: urlDatabase, user: user, filteredUrls: urlsForUser(userId) };
   // console.log(urlsForUser(userId));
-  res.render("urls_index", templateVars);
+  res.render("urls_index", templateVars);  // Displays html in urls_index.ejs
   }
 });
 
 // Add a POST route that removes a URL resource: POST /urls/:shortURL/delete
 // After the resource has been deleted, redirect the client back to the urls_index page ("/urls").
 app.post("/urls/:shortURL/delete", (req, res) => {
+
+  // const userId = req.cookies["user_id"];
+  const userId = req.session.user_id;  
+
+  if (userId && userId in users) {  
   delete urlDatabase[req.params.shortURL];
-  console.log(req.body);  // Log the POST request body to the console
+  // console.log(req.body);  // Log the POST request body to the console
   res.redirect("/urls");
+  }
 });
 
 app.post("/urls", (req, res) => {
@@ -167,12 +174,15 @@ app.post("/urls", (req, res) => {
   const user = users[userId];
 
   let shortURL = generateRandomString();
-  urlDatabase[shortURL] = {};
-  urlDatabase[shortURL].longURL = req.body.newLongURL;
-  urlDatabase[shortURL].userID = userId;  
+  if (userId && userId in users) {
+    urlDatabase[shortURL] = {
+      longURL: req.body.newLongURL,
+      userID: userId
+    };
 
-  console.log(req.body);  // Log the POST request body to the console
+  // console.log(req.body);  // Log the POST request body to the console
   res.redirect(`/urls/${shortURL}`);
+  }
 });
 
 app.get("/urls/new", (req, res) => {
@@ -211,26 +221,26 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/urls/:shortURL", (req, res) => {
 // Assigning new longURL to database
   urlDatabase[req.params.shortURL].longURL = req.body.newLongURL;
-  console.log(req.body);  // Log the POST request body to the console
+  // console. log(req.body);  // Log the POST request body to the console
   res.redirect("/urls");
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const newlongURL = urlDatabase[req.params.shortURL].longURL; 
-  res.redirect(newlongURL);
+  const newLongURL = urlDatabase[req.params.shortURL].longURL; 
+  res.redirect(newLongURL);
+  if (!newLongURL) {
+    res.redirect("/urls");    
+  }
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.send("Welcome to the TinyApp - Type /urls to proceed");
 });
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
